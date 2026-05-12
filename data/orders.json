@@ -1,0 +1,263 @@
+[
+  {
+    "id": 1778591425257,
+    "customer": {
+      "name": "Test"
+    },
+    "items": [
+      {
+        "name": "iPhone"
+      }
+    ],
+    "total": 1000,
+    "status": "yangi",
+    "date": "2026-05-12T13:10:25.257Z"
+  },
+  {
+    "id": 1778591453082,
+    "status": "yangi",
+    "customer": {
+      "name": "cs",
+      "phone": "+998930350845",
+      "address": "sss"
+    },
+    "payment": "naqd",
+    "notes": "",
+    "items": [
+      {
+        "productId": 3,
+        "name": "Xiaomi 14 Pro",
+        "price": 9500000,
+        "image": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14-pro.jpg",
+        "quantity": 1
+      }
+    ],
+    "total": 9500000,
+    "date": "2026-05-12T13:10:53.148Z"
+  },
+  {
+    "id": 1778591467965,
+    "status": "yangi",
+    "customer": {
+      "name": "xdc",
+      "phone": "+998930350845",
+      "address": "dc"
+    },
+    "payment": "naqd",
+    "notes": "",
+    "items": [
+      {
+        "productId": 3,
+        "name": "Xiaomi 14 Pro",
+        "price": 9500000,
+        "image": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14-pro.jpg",
+        "quantity": 1
+      }
+    ],
+    "total": 9500000,
+    "date": "2026-05-12T13:11:08.033Z"
+  },
+  {
+    "id": 1778592028698,
+    "status": "yangi",
+    "customer": {
+      "name": "ede",
+      "phone": "+998930350845",
+      "address": "zx"
+    },
+    "payment": "naqd",
+    "items": [
+      {
+        "productId": 3,
+        "name": "Xiaomi 14 Pro",
+        "price": 9500000,
+        "image": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14-pro.jpg",
+        "quantity": 1
+      },
+      {
+        "productId": 2,
+        "name": "Samsung S24 Ultra",
+        "price": 14500000,
+        "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s24-ultra-5g.jpg",
+        "quantity": 1
+      }
+    ],
+    "total": 24000000,
+    "date": "2026-05-12T13:20:28.785Z"
+  },
+  {
+    "id": 1778592028730,
+    "status": "yangi",
+    "customer": {
+      "name": "ede",
+      "phone": "+998930350845",
+      "address": "zx"
+    },
+    "payment": "naqd",
+    "items": [
+      {
+        "productId": 3,
+        "name": "Xiaomi 14 Pro",
+        "price": 9500000,
+        "image": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14-pro.jpg",
+        "quantity": 1
+      },
+      {
+        "productId": 2,
+        "name": "Samsung S24 Ultra",
+        "price": 14500000,
+        "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s24-ultra-5g.jpg",
+        "quantity": 1
+      }
+    ],
+    "total": 24000000,
+    "date": "2026-05-12T13:20:28.802Z"
+  },
+  {
+    "id": 1778592115615,
+    "status": "yangi",
+    "customer": {
+      "name": "dddq",
+      "phone": "+998930350845",
+      "address": "dew"
+    },
+    "payment": "naqd",
+    "items": [
+      {
+        "productId": 2,
+        "name": "Samsung S24 Ultra",
+        "price": 14500000,
+        "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s24-ultra-5g.jpg",
+        "quantity": 1
+      }
+    ],
+    "total": 14500000,
+    "date": "2026-05-12T13:21:55.700Z"
+  },
+  {
+    "id": 1778592115636,
+    "status": "yangi",
+    "customer": {
+      "name": "dddq",
+      "phone": "+998930350845",
+      "address": "dew"
+    },
+    "payment": "naqd",
+    "items": [
+      {
+        "productId": 2,
+        "name": "Samsung S24 Ultra",
+        "price": 14500000,
+        "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s24-ultra-5g.jpg",
+        "quantity": 1
+      }
+    ],
+    "total": 14500000,
+    "date": "2026-05-12T13:21:55.740Z"
+  },
+  {
+    "id": 1778592115648,
+    "status": "yangi",
+    "customer": {
+      "name": "dddq",
+      "phone": "+998930350845",
+      "address": "dew"
+    },
+    "payment": "naqd",
+    "items": [
+      {
+        "productId": 2,
+        "name": "Samsung S24 Ultra",
+        "price": 14500000,
+        "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s24-ultra-5g.jpg",
+        "quantity": 1
+      }
+    ],
+    "total": 14500000,
+    "date": "2026-05-12T13:21:56.018Z"
+  },
+  {
+    "id": 1778592313472,
+    "customer": {
+      "name": "ede",
+      "phone": "+998930350845",
+      "address": "xsx"
+    },
+    "payment": "naqd",
+    "items": [
+      {
+        "productId": 1,
+        "name": "iPhone 15 Pro Max",
+        "price": 15000000,
+        "image": "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-15-pro-max.jpg",
+        "quantity": 1
+      }
+    ],
+    "total": 15000000,
+    "date": "2026-05-12T13:25:13.702Z",
+    "status": "yangi"
+  },
+  {
+    "id": 1778592684738,
+    "customer": {
+      "name": "dddq",
+      "phone": "+998930350845",
+      "address": "xsxs"
+    },
+    "payment": "naqd",
+    "items": [
+      {
+        "productId": 2,
+        "name": "Samsung S24 Ultra",
+        "price": 14500000,
+        "image": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s24-ultra-5g.jpg",
+        "quantity": 1
+      }
+    ],
+    "total": 14500000,
+    "date": "2026-05-12T13:31:24.842Z",
+    "status": "yangi"
+  },
+  {
+    "id": 1778592921483,
+    "customer": {
+      "name": "xsxsxs",
+      "phone": "+998930350845",
+      "address": "xsss"
+    },
+    "payment": "naqd",
+    "items": [
+      {
+        "productId": 3,
+        "name": "Xiaomi 14 Pro",
+        "price": 9500000,
+        "image": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14-pro.jpg",
+        "quantity": 1
+      }
+    ],
+    "total": 9500000,
+    "date": "2026-05-12T13:35:21.565Z",
+    "status": "yangi"
+  },
+  {
+    "id": 1778595225915,
+    "customer": {
+      "name": "dddq",
+      "phone": "+998930350845",
+      "address": "cddcdc"
+    },
+    "payment": "naqd",
+    "items": [
+      {
+        "productId": 3,
+        "name": "Xiaomi 14 Pro",
+        "price": 9500000,
+        "image": "https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14-pro.jpg",
+        "quantity": 1
+      }
+    ],
+    "total": 9500000,
+    "date": "2026-05-12T14:13:45.941Z",
+    "status": "yangi"
+  }
+]

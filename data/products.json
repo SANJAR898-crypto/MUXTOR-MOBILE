@@ -1,0 +1,5 @@
+[
+  {"id":1,"name":"iPhone 15 Pro Max","brand":"apple","brandName":"Apple","price":15000000,"oldPrice":16500000,"memory":"256GB","color":"Titanium Blue","condition":"Yangi","category":"smartfon","inStock":true,"isNew":true,"isPopular":true,"specs":"256GB, 8GB RAM, 48MP","description":"iPhone 15 Pro Max — A17 Pro chip.","image":"https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-15-pro-max.jpg"},
+  {"id":2,"name":"Samsung S24 Ultra","brand":"samsung","brandName":"Samsung","price":14500000,"memory":"512GB","color":"Titanium Gray","condition":"Yangi","category":"smartfon","inStock":true,"isNew":true,"isPopular":true,"specs":"512GB, 12GB RAM, 200MP","description":"Samsung S24 Ultra — Galaxy AI.","image":"https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s24-ultra-5g.jpg"},
+  {"id":3,"name":"Xiaomi 14 Pro","brand":"xiaomi","brandName":"Xiaomi","price":9500000,"oldPrice":10500000,"memory":"256GB","color":"Black","condition":"Yangi","category":"smartfon","inStock":true,"isPopular":true,"specs":"256GB, 12GB RAM, 50MP Leica","description":"Xiaomi 14 Pro — Leica optikasi.","image":"https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14-pro.jpg"}
+]

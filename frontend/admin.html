@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Muxtor Mobile — Admin Panel</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+            <span class="sidebar-emoji">📱</span>
+            <div>
+                <h3>MUXTOR <span>MOBILE</span></h3>
+                <small>Admin Panel v2.0</small>
+            </div>
+        </div>
+        <nav class="sidebar-nav">
+            <div class="nav-section-label">ASOSIY</div>
+            <a href="#" class="nav-item active" data-page="dashboard">
+                <i class="fas fa-chart-pie"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="#" class="nav-item" data-page="products">
+                <i class="fas fa-box"></i>
+                <span>Mahsulotlar</span>
+                <span class="nav-count" id="navProductCount">0</span>
+            </a>
+            <a href="#" class="nav-item" data-page="add-product">
+                <i class="fas fa-plus-circle"></i>
+                <span>Yangi mahsulot</span>
+            </a>
+            <div class="nav-section-label">BOSHQARUV</div>
+            <a href="#" class="nav-item" data-page="orders">
+                <i class="fas fa-shopping-cart"></i>
+                <span>Buyurtmalar</span>
+                <span class="nav-count nav-count-new" id="navOrderCount">0</span>
+            </a>
+            <div class="sidebar-bottom">
+                <a href="index.html" class="nav-item nav-item-external" target="_blank">
+                    <i class="fas fa-external-link-alt"></i>
+                    <span>Saytni ko'rish</span>
+                </a>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- SIDEBAR OVERLAY -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- MAIN -->
+    <main class="main" id="main">
+        <!-- TOPBAR -->
+        <header class="topbar">
+            <div class="topbar-left">
+                <button class="menu-toggle" id="menuToggle" aria-label="Menu">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="breadcrumb" id="breadcrumb">
+                    <span>Dashboard</span>
+                </div>
+            </div>
+            <div class="topbar-right">
+                <span class="topbar-time" id="topbarTime"></span>
+                <div class="topbar-actions">
+                    <button class="topbar-icon-btn" title="Yangilash" onclick="refreshData()">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                    <a class="topbar-icon-btn" href="index.html" target="_blank" title="Sayt">
+                        <i class="fas fa-globe"></i>
+                    </a>
+                    <div class="admin-badge">
+                        <div class="admin-avatar">A</div>
+                        <span>Admin</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- PAGE: DASHBOARD -->
+        <div class="page active" id="page-dashboard">
+            <div class="page-header">
+                <div>
+                    <div class="page-label">UMUMIY KO'RINISH</div>
+                    <h1>Dashboard</h1>
+                </div>
+            </div>
+            <div class="stats-grid" id="statsGrid">
+                <div class="stat-card stat-gold">
+                    <div class="stat-icon"><i class="fas fa-box"></i></div>
+                    <div class="stat-body">
+                        <strong id="statProducts">0</strong>
+                        <span>Jami mahsulotlar</span>
+                    </div>
+                    <div class="stat-trend"><i class="fas fa-arrow-up"></i></div>
+                </div>
+                <div class="stat-card stat-green">
+                    <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+                    <div class="stat-body">
+                        <strong id="statInStock">0</strong>
+                        <span>Omborda mavjud</span>
+                    </div>
+                    <div class="stat-trend"><i class="fas fa-arrow-up"></i></div>
+                </div>
+                <div class="stat-card stat-red">
+                    <div class="stat-icon"><i class="fas fa-tag"></i></div>
+                    <div class="stat-body">
+                        <strong id="statDiscount">0</strong>
+                        <span>Chegirmada</span>
+                    </div>
+                    <div class="stat-trend"></div>
+                </div>
+                <div class="stat-card stat-blue">
+                    <div class="stat-icon"><i class="fas fa-shopping-cart"></i></div>
+                    <div class="stat-body">
+                        <strong id="statOrders">0</strong>
+                        <span>Buyurtmalar</span>
+                    </div>
+                    <div class="stat-trend"><i class="fas fa-arrow-up"></i></div>
+                </div>
+            </div>
+            <div class="dash-grid">
+                <div class="dash-card">
+                    <div class="dash-card-header">
+                        <h3><i class="fas fa-clock"></i> So'nggi qo'shilgan</h3>
+                        <button class="btn btn-sm btn-ghost" onclick="switchPage('products')">Barchasi <i class="fas fa-arrow-right"></i></button>
+                    </div>
+                    <div id="recentProducts"></div>
+                </div>
+                <div class="dash-card">
+                    <div class="dash-card-header">
+                        <h3><i class="fas fa-chart-bar"></i> Kategoriyalar</h3>
+                    </div>
+                    <div id="categoryStats"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PAGE: MAHSULOTLAR -->
+        <div class="page" id="page-products">
+            <div class="page-header">
+                <div>
+                    <div class="page-label">BOSHQARUV</div>
+                    <h1>Mahsulotlar</h1>
+                </div>
+                <button class="btn btn-gold" onclick="switchPage('add-product')">
+                    <i class="fas fa-plus"></i> Yangi qo'shish
+                </button>
+            </div>
+            <div class="search-filter-bar">
+                <div class="search-wrap">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="adminSearch" placeholder="Mahsulot qidirish...">
+                </div>
+                <select id="adminFilter" class="filter-select">
+                    <option value="all">Barcha kategoriya</option>
+                    <option value="smartfon">📱 Smartfonlar</option>
+                    <option value="planshet">📟 Planshetlar</option>
+                    <option value="aksesuar">🎧 Aksessuarlar</option>
+                </select>
+                <select id="adminBrandFilter" class="filter-select">
+                    <option value="all">Barcha brend</option>
+                    <option value="apple">Apple</option>
+                    <option value="samsung">Samsung</option>
+                    <option value="xiaomi">Xiaomi</option>
+                    <option value="oneplus">OnePlus</option>
+                    <option value="google">Google</option>
+                </select>
+            </div>
+            <div class="table-wrapper">
+                <table class="data-table" id="productsTable">
+                    <thead>
+                        <tr>
+                            <th>Rasm</th>
+                            <th>Nomi</th>
+                            <th>Brend</th>
+                            <th>Narx</th>
+                            <th>Kategoriya</th>
+                            <th>Ombor</th>
+                            <th>Belgilar</th>
+                            <th>Amallar</th>
+                        </tr>
+                    </thead>
+                    <tbody id="productsTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- PAGE: MAHSULOT QO'SHISH -->
+        <div class="page" id="page-add-product">
+            <div class="page-header">
+                <div>
+                    <div class="page-label">MAHSULOT</div>
+                    <h1 id="formTitle">Yangi mahsulot qo'shish</h1>
+                </div>
+                <button class="btn btn-ghost" onclick="switchPage('products')">
+                    <i class="fas fa-arrow-left"></i> Orqaga
+                </button>
+            </div>
+            <form class="product-form" id="productForm">
+                <input type="hidden" id="editId">
+                <div class="form-sections">
+                    <div class="form-section">
+                        <div class="form-section-title"><i class="fas fa-info-circle"></i> Asosiy ma'lumotlar</div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Nomi *</label>
+                                <input type="text" id="prodName" required placeholder="iPhone 15 Pro Max">
+                            </div>
+                            <div class="form-group">
+                                <label>Brend *</label>
+                                <select id="prodBrand" required>
+                                    <option value="apple">🍎 Apple</option>
+                                    <option value="samsung">⭐ Samsung</option>
+                                    <option value="xiaomi">🔶 Xiaomi</option>
+                                    <option value="oneplus">🔴 OnePlus</option>
+                                    <option value="google">🔵 Google</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Narx (so'm) *</label>
+                                <div class="input-prefix-wrap">
+                                    <span class="input-prefix">UZS</span>
+                                    <input type="number" id="prodPrice" required placeholder="15000000" min="0">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Eski narx <span class="label-hint">(chegirma uchun)</span></label>
+                                <div class="input-prefix-wrap">
+                                    <span class="input-prefix">UZS</span>
+                                    <input type="number" id="prodOldPrice" placeholder="16500000" min="0">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Xotira</label>
+                                <input type="text" id="prodMemory" placeholder="256GB">
+                            </div>
+                            <div class="form-group">
+                                <label>Rangi</label>
+                                <input type="text" id="prodColor" placeholder="Titanium Blue">
+                            </div>
+                            <div class="form-group">
+                                <label>Kategoriya</label>
+                                <select id="prodCategory">
+                                    <option value="smartfon">📱 Smartfon</option>
+                                    <option value="planshet">📟 Planshet</option>
+                                    <option value="aksesuar">🎧 Aksessuar</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Holati</label>
+                                <select id="prodCondition">
+                                    <option value="Yangi">✨ Yangi</option>
+                                    <option value="Ishlatilgan">🔄 Ishlatilgan</option>
+                                </select>
+                            </div>
+                            <div class="form-group form-full">
+                                <label>Spesifikasiyalar <span class="label-hint">(vergul bilan ajrating)</span></label>
+                                <input type="text" id="prodSpecs" placeholder="256GB, 8GB RAM, 48MP, A17 Pro chip">
+                            </div>
+                            <div class="form-group form-full">
+                                <label>Tavsif</label>
+                                <textarea id="prodDescription" rows="3" placeholder="Mahsulot haqida batafsil ma'lumot..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <div class="form-section-title"><i class="fas fa-image"></i> Rasm</div>
+                        <div class="image-section">
+                            <div class="image-upload-area" id="imageUploadArea">
+                                <div class="image-preview-large" id="imagePreview">
+                                    <i class="fas fa-image"></i>
+                                    <span>Rasm yo'q</span>
+                                </div>
+                                <div class="image-controls">
+                                    <div class="form-group">
+                                        <label>Rasm URL manzili</label>
+                                        <input type="text" id="prodImage" placeholder="https://...">
+                                    </div>
+                                    <div class="image-or">yoki</div>
+                                    <label class="file-upload-btn">
+                                        <i class="fas fa-upload"></i> Fayldan yuklash
+                                        <input type="file" id="prodImageFile" accept="image/*" style="display:none">
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-section-title" style="margin-top:24px"><i class="fas fa-tags"></i> Belgilar</div>
+                        <div class="toggles-grid">
+                            <label class="toggle-card">
+                                <input type="checkbox" id="prodInStock" checked>
+                                <div class="toggle-content">
+                                    <i class="fas fa-warehouse"></i>
+                                    <span>Omborda bor</span>
+                                </div>
+                                <div class="toggle-switch"></div>
+                            </label>
+                            <label class="toggle-card">
+                                <input type="checkbox" id="prodIsNew">
+                                <div class="toggle-content">
+                                    <i class="fas fa-star"></i>
+                                    <span>Yangi belgisi</span>
+                                </div>
+                                <div class="toggle-switch"></div>
+                            </label>
+                            <label class="toggle-card">
+                                <input type="checkbox" id="prodIsPopular">
+                                <div class="toggle-content">
+                                    <i class="fas fa-fire"></i>
+                                    <span>TOP belgisi</span>
+                                </div>
+                                <div class="toggle-switch"></div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-ghost" onclick="resetForm()">
+                        <i class="fas fa-times"></i> Bekor qilish
+                    </button>
+                    <button type="submit" class="btn btn-gold" id="saveBtn">
+                        <i class="fas fa-save"></i> Saqlash
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- PAGE: BUYURTMALAR -->
+        <div class="page" id="page-orders">
+            <div class="page-header">
+                <div>
+                    <div class="page-label">BOSHQARUV</div>
+                    <h1>Buyurtmalar</h1>
+                </div>
+                <button class="btn btn-ghost btn-sm" onclick="clearOrders()">
+                    <i class="fas fa-trash"></i> Tozalash
+                </button>
+            </div>
+            <div class="table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Mijoz</th>
+                            <th>Telefon</th>
+                            <th>Mahsulotlar</th>
+                            <th>Summa</th>
+                            <th>To'lov</th>
+                            <th>Vaqt</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ordersTableBody">
+                        <tr><td colspan="7" class="table-empty">Buyurtmalar hozircha yo'q</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- TOAST -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Delete Confirm -->
+    <div class="confirm-overlay" id="confirmOverlay" style="display:none">
+        <div class="confirm-box">
+            <div class="confirm-icon"><i class="fas fa-exclamation-triangle"></i></div>
+            <h3>O'chirishni tasdiqlang</h3>
+            <p>Haqiqatan ham bu mahsulotni o'chirmoqchimisiz?</p>
+            <div class="confirm-btns">
+                <button class="btn btn-ghost" onclick="closeConfirm()">Bekor qilish</button>
+                <button class="btn btn-danger" id="confirmBtn">O'chirish</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="admin.js"></script>
+</body>
+</html>
