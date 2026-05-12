@@ -14,77 +14,60 @@ var ADMIN_CHAT_ID = process.env.ADMIN_CHAT_ID || '8638170982';
 app.use(cors());
 app.use(express.json());
 
+// Health
 app.get('/health', function(req, res) {
     res.json({ status: 'ok' });
 });
 
-app.post('/api/order', function(req, res) {
-    var orderData = req.body;
-    console.log('📦 Yangi buyurtma!');
-    console.log('👤', orderData.customer?.name);
-    console.log('📞', orderData.customer?.phone);
-
-    // Faylga saqlash
-    var dataDir = path.join(__dirname, '..', 'data');
-    if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
-    var ordersFile = path.join(dataDir, 'orders.json');
-    var orders = [];
-    if (fs.existsSync(ordersFile)) orders = JSON.parse(fs.readFileSync(ordersFile, 'utf8'));
-    orders.push({ id: Date.now(), ...orderData, date: new Date().toISOString() });
-    fs.writeFileSync(ordersFile, JSON.stringify(orders, null, 2));
-    // ========== MAHSULOTLAR API ==========
-
 // Mahsulotlarni olish
 app.get('/api/products', function(req, res) {
-    var productsFile = path.join(__dirname, '..', 'data', 'products.json');
-    var products = [];
-    if (fs.existsSync(productsFile)) {
-        products = JSON.parse(fs.readFileSync(productsFile, 'utf8'));
+    var f = path.join(__dirname, '..', 'data', 'products.json');
+    if (fs.existsSync(f)) {
+        res.json(JSON.parse(fs.readFileSync(f, 'utf8')));
+    } else {
+        res.json([]);
     }
-    res.json(products);
 });
 
 // Mahsulotlarni saqlash
 app.post('/api/products', function(req, res) {
-    var products = req.body;
-    var dataDir = path.join(__dirname, '..', 'data');
-    if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
-    var productsFile = path.join(dataDir, 'products.json');
-    fs.writeFileSync(productsFile, JSON.stringify(products, null, 2));
-    console.log('📱 Mahsulotlar yangilandi:', products.length, 'ta');
-    res.json({ success: true, count: products.length });
+    var dir = path.join(__dirname, '..', 'data');
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+    fs.writeFileSync(path.join(dir, 'products.json'), JSON.stringify(req.body, null, 2));
+    res.json({ success: true });
 });
-    // Telegramga yuborish
+
+// Buyurtma
+app.post('/api/order', function(req, res) {
+    var o = req.body;
+    console.log('📦 Buyurtma:', o.customer?.name);
+
+    var dir = path.join(__dirname, '..', 'data');
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+    var f = path.join(dir, 'orders.json');
+    var orders = fs.existsSync(f) ? JSON.parse(fs.readFileSync(f, 'utf8')) : [];
+    orders.push({ id: Date.now(), ...o, date: new Date().toISOString() });
+    fs.writeFileSync(f, JSON.stringify(orders, null, 2));
+
+    // Telegramga
     var msg = '📦 YANGI BUYURTMA!\n\n';
-    msg += '👤 Mijoz: ' + (orderData.customer?.name || '-') + '\n';
-    msg += '📞 Tel: ' + (orderData.customer?.phone || '-') + '\n';
-    msg += '📍 Manzil: ' + (orderData.customer?.address || '-') + '\n\n';
-    
+    msg += '👤 ' + (o.customer?.name || '-') + '\n';
+    msg += '📞 ' + (o.customer?.phone || '-') + '\n';
+    msg += '📍 ' + (o.customer?.address || '-') + '\n\n';
     var total = 0;
-    (orderData.items || []).forEach(function(item) {
-        msg += '• ' + item.name + ' × ' + item.quantity + ' — ' + (item.price * item.quantity).toLocaleString('uz-UZ') + ' so\'m\n';
-        total += item.price * item.quantity;
+    (o.items || []).forEach(function(i) {
+        msg += '• ' + i.name + ' ×' + i.quantity + '\n';
+        total += i.price * i.quantity;
     });
-    
-    msg += '\n💰 Jami: ' + total.toLocaleString('uz-UZ') + ' so\'m';
-    msg += '\n🕐 ' + new Date().toLocaleString('uz-UZ');
-    msg += '\n🌐 Saytdan buyurtma';
+    msg += '\n💰 ' + total.toLocaleString('uz-UZ') + ' so\'m';
 
-    var apiUrl = 'https://api.telegram.org/bot' + BOT_TOKEN + '/sendMessage?chat_id=' + ADMIN_CHAT_ID + '&text=' + encodeURIComponent(msg);
-
-    https.get(apiUrl, function(response) {
-        var data = '';
-        response.on('data', function(chunk) { data += chunk; });
-        response.on('end', function() {
-            console.log('TG:', data);
-        });
-    }).on('error', function(e) {
-        console.log('TG xatolik:', e.message);
+    https.get('https://api.telegram.org/bot' + BOT_TOKEN + '/sendMessage?chat_id=' + ADMIN_CHAT_ID + '&text=' + encodeURIComponent(msg), function(r) {
+        console.log('TG: yuborildi');
     });
 
-    res.json({ success: true, message: 'OK' });
+    res.json({ success: true });
 });
 
 app.listen(PORT, function() {
-    console.log('✅ Server port ' + PORT + ' da ishlamoqda');
+    console.log('✅ Server ' + PORT + ' portda');
 });
