@@ -32,7 +32,28 @@ app.post('/api/order', function(req, res) {
     if (fs.existsSync(ordersFile)) orders = JSON.parse(fs.readFileSync(ordersFile, 'utf8'));
     orders.push({ id: Date.now(), ...orderData, date: new Date().toISOString() });
     fs.writeFileSync(ordersFile, JSON.stringify(orders, null, 2));
+    // ========== MAHSULOTLAR API ==========
 
+// Mahsulotlarni olish
+app.get('/api/products', function(req, res) {
+    var productsFile = path.join(__dirname, '..', 'data', 'products.json');
+    var products = [];
+    if (fs.existsSync(productsFile)) {
+        products = JSON.parse(fs.readFileSync(productsFile, 'utf8'));
+    }
+    res.json(products);
+});
+
+// Mahsulotlarni saqlash
+app.post('/api/products', function(req, res) {
+    var products = req.body;
+    var dataDir = path.join(__dirname, '..', 'data');
+    if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
+    var productsFile = path.join(dataDir, 'products.json');
+    fs.writeFileSync(productsFile, JSON.stringify(products, null, 2));
+    console.log('📱 Mahsulotlar yangilandi:', products.length, 'ta');
+    res.json({ success: true, count: products.length });
+});
     // Telegramga yuborish
     var msg = '📦 YANGI BUYURTMA!\n\n';
     msg += '👤 Mijoz: ' + (orderData.customer?.name || '-') + '\n';

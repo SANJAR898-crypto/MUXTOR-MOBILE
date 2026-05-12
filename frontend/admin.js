@@ -9,8 +9,19 @@ function saveProducts(products) {
     localStorage.setItem('muxtorAdminProducts', JSON.stringify(products));
     localStorage.setItem('muxtorSharedProducts', JSON.stringify(products));
     
-    // JSON faylni ham yangilash (server orqali)
-    updateJSONFile(products);
+    // Serverga ham yuborish
+    fetch('https://muxtor-mobile.onrender.com/api/products', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(products)
+    })
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+        console.log('✅ Server yangilandi:', data.count, 'ta mahsulot');
+    })
+    .catch(function(err) {
+        console.log('⚠️ Server offline, localStorage da saqlandi');
+    });
 }
 
 function updateJSONFile(products) {

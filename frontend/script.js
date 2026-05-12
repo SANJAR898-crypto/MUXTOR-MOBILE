@@ -291,60 +291,40 @@ function submitOrderNow() {
     if (!phone.startsWith('+998') || phone.length < 13) { toast('+998XXXXXXXXX formatida kiriting!', 'error'); return; }
     if (cart.length === 0) { toast('Savatingiz bo\'sh!', 'error'); return; }
 
-    const order = {
-        id: Date.now(),
-        customer: { name, phone, address },
-        payment,
-        items: cart.slice(),
-        total: getTotal(),
-        date: new Date().toISOString()
+    var order = {
+        customer: { name: name, phone: phone, address: address },
+        payment: payment,
+        items: cart.map(function(item) {
+            return {
+                name: item.name,
+                price: item.price,
+                quantity: item.quantity
+            };
+        }),
+        total: getTotal()
     };
+
+    console.log('Yuborilgan buyurtma:', JSON.stringify(order));
 
     // localStorage ga saqlash
     try {
-        const orders = JSON.parse(localStorage.getItem('muxtorOrders') || '[]');
+        var orders = JSON.parse(localStorage.getItem('muxtorOrders') || '[]');
         orders.push(order);
         localStorage.setItem('muxtorOrders', JSON.stringify(orders.slice(-50)));
     } catch (e) {}
 
-    // ========== TELEGRAMGA YUBORISH ==========
-    var BOT_TOKEN = '8737216441:AAF2BRqg5Ynsg6rPsDYPKbQv2J7uafXfp8M';
-    var CHAT_ID = '8638170982';
-    
-    var msg = '📦 <b>YANGI BUYURTMA!</b>\n\n';
-    msg += '<b>👤 Mijoz:</b> ' + name + '\n';
-    msg += '<b>📞 Tel:</b> ' + phone + '\n';
-    msg += '<b>📍 Manzil:</b> ' + (address || 'Ko\'rsatilmagan') + '\n';
-    msg += '<b>💳 To\'lov:</b> ' + (payment === 'naqd' ? 'Naqd pul' : payment.toUpperCase()) + '\n\n';
-    msg += '<b>📱 Mahsulotlar:</b>\n';
-    
-    cart.forEach(function(item) {
-        msg += '  • ' + item.name + ' × ' + item.quantity + ' — ' + formatPrice(item.price * item.quantity) + '\n';
-    });
-    
-    msg += '\n💰 <b>Jami: ' + formatPrice(getTotal()) + '</b>\n';
-    msg += '🕐 ' + new Date().toLocaleString('uz-UZ') + '\n';
-    msg += '🌐 Saytdan buyurtma';
-
-   fetch('https://muxtor-mobile.onrender.com/API/ORDER', {
+    // RENDER ga yuborish
+    fetch('https://muxtor-mobile.onrender.com/api/order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            chat_id: CHAT_ID,
-            text: msg,
-            parse_mode: 'HTML'
-        })
+        body: JSON.stringify(order)
     })
     .then(function(res) { return res.json(); })
     .then(function(data) {
-        if (data.ok) {
-            console.log('✅ Telegramga yuborildi!');
-        } else {
-            console.log('❌ Xatolik:', data.description);
-        }
+        console.log('✅ Buyurtma yuborildi:', data);
     })
     .catch(function(err) {
-        console.log('⚠️ Tarmoq xatolik:', err.message);
+        console.log('⚠️ Xatolik:', err.message);
     });
 
     toast('🎉 Buyurtmangiz qabul qilindi! Tez orada bog\'lanamiz.');
@@ -352,7 +332,6 @@ function submitOrderNow() {
     g('orderForm')?.reset();
     closeAllModals();
 }
-
 // ========== SCROLL OBSERVER (BUG FIX: ta'riflangan) ==========
 function initObserver() {
     if (!('IntersectionObserver' in window)) return;
@@ -487,27 +466,36 @@ setInterval(() => {
 
 // ========== INIT (BUG FIX: faqat bitta init, barcha funksiyalar ta'riflangan) ==========
 function init() {
-    try {
-        products = loadProducts();
-        renderProducts(products);
-        updateCartUI();
-        initEvents();
-        initObserver();
-
-        // Count-up animatsiyalari
-        qa('.count-up').forEach(el => {
-            const target = parseInt(el.dataset.target);
-            if (!isNaN(target)) countUp(el, target);
+    // Mahsulotlarni serverdan yuklash
+    fetch('https://muxtor-mobile.onrender.com/api/products')
+        .then(function(res) { return res.json(); })
+        .then(function(data) {
+            if (data && data.length > 0) {
+                products = data;
+            }
+            renderProducts(products);
+            updateCartUI();
+            initEvents();
+            hideLoader();
+            console.log('📱 ' + products.length + ' ta mahsulot yuklandi');
+        })
+        .catch(function() {
+            // Server offline bo'lsa, localStorage dan yuklash
+            var shared = localStorage.getItem('muxtorSharedProducts');
+            if (shared) {
+                try { products = JSON.parse(shared); } catch(e) {}
+            }
+            renderProducts(products);
+            updateCartUI();
+            initEvents();
+            hideLoader();
         });
-
-        hideLoader();
-        console.log('📱 Muxtor Mobile — Tayyor!');
-    } catch (e) {
-        console.error('Init xatolik:', e.message, e.stack);
-        hideLoader();
-    }
+    
+    // Count-up
+    qa('.count-up').forEach(function(el) {
+        countUp(el, parseInt(el.dataset.target));
+    });
 }
-
 window.addEventListener('load', function () {
     setTimeout(init, 800);
 });
