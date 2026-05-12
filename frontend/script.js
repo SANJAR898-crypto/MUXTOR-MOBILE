@@ -326,7 +326,7 @@ function submitOrderNow() {
     msg += '🕐 ' + new Date().toLocaleString('uz-UZ') + '\n';
     msg += '🌐 Saytdan buyurtma';
 
-    fetch('https://api.telegram.org/bot' + BOT_TOKEN + '/sendMessage', {
+   fetch('https://muxtor-mobile.onrender.com/API/ORDER', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
