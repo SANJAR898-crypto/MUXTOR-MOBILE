@@ -148,7 +148,22 @@ function renderProducts(list) {
 
 // ========== FILTER ==========
 function applyFilters() {
-    let r = products.slice();
+    // Har safar serverdan eng so'nggi mahsulotlarni olish
+    fetch('https://muxtor-mobile.onrender.com/api/products')
+        .then(function(res) { return res.json(); })
+        .then(function(data) {
+            if (data && data.length > 0) {
+                products = data;
+            }
+            doFilter();
+        })
+        .catch(function() {
+            doFilter();
+        });
+}
+
+function doFilter() {
+    var r = products.slice();
     if (currentFilter === 'yangi') r = r.filter(p => p.isNew);
     else if (currentFilter === 'chegirma') r = r.filter(p => p.oldPrice);
     else if (currentFilter !== 'all') r = r.filter(p => p.category === currentFilter);
@@ -466,35 +481,27 @@ setInterval(() => {
 
 // ========== INIT (BUG FIX: faqat bitta init, barcha funksiyalar ta'riflangan) ==========
 function init() {
-    // Mahsulotlarni serverdan yuklash
+    // AVVAL serverdan yuklash
     fetch('https://muxtor-mobile.onrender.com/api/products')
         .then(function(res) { return res.json(); })
         .then(function(data) {
             if (data && data.length > 0) {
                 products = data;
+                console.log('📱 Serverdan ' + products.length + ' ta mahsulot yuklandi');
             }
             renderProducts(products);
             updateCartUI();
             initEvents();
             hideLoader();
-            console.log('📱 ' + products.length + ' ta mahsulot yuklandi');
         })
-        .catch(function() {
-            // Server offline bo'lsa, localStorage dan yuklash
-            var shared = localStorage.getItem('muxtorSharedProducts');
-            if (shared) {
-                try { products = JSON.parse(shared); } catch(e) {}
-            }
+        .catch(function(err) {
+            console.log('⚠️ Server offline:', err.message);
+            // Server ishlamasa, default mahsulotlarni ko'rsatish
             renderProducts(products);
             updateCartUI();
             initEvents();
             hideLoader();
         });
-    
-    // Count-up
-    qa('.count-up').forEach(function(el) {
-        countUp(el, parseInt(el.dataset.target));
-    });
 }
 window.addEventListener('load', function () {
     setTimeout(init, 800);
