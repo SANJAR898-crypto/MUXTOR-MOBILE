@@ -253,5 +253,43 @@ function init() {
     updateStats();
 }
 
+// ========== BUYURTMALARNI YUKLASH ==========
+function loadOrders() {
+    var ordersTableBody = document.getElementById('ordersTableBody');
+    if (!ordersTableBody) return;
+    
+    // Serverdan buyurtmalarni olish
+    fetch('https://muxtor-mobile.onrender.com/api/orders')
+        .then(function(res) { return res.json(); })
+        .then(function(orders) {
+            if (orders.length === 0) {
+                ordersTableBody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:30px;">Buyurtmalar hozircha yo\'q</td></tr>';
+                return;
+            }
+            
+            ordersTableBody.innerHTML = orders.reverse().map(function(o) {
+                var items = o.items || [];
+                var total = items.reduce(function(s, i) { return s + (i.price * i.quantity); }, 0);
+                return '<tr>' +
+                    '<td>#' + o.id + '</td>' +
+                    '<td>' + (o.customer?.name || '-') + '</td>' +
+                    '<td>' + (o.customer?.phone || '-') + '</td>' +
+                    '<td>' + items.map(function(i) { return i.name + ' ×' + i.quantity; }).join(', ') + '</td>' +
+                    '<td>' + total.toLocaleString('uz-UZ') + ' so\'m</td>' +
+                    '<td><span style="color:' + (o.status === 'yangi' ? '#f59e0b' : o.status === 'yakunlandi' ? '#16a34a' : '#dc2626') + ';font-weight:600;">' + (o.status || 'yangi') + '</span></td>' +
+                    '<td>' + new Date(o.date).toLocaleString('uz-UZ') + '</td>' +
+                '</tr>';
+            }).join('');
+        })
+        .catch(function() {
+            ordersTableBody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:30px;">Serverga ulanib bo\'lmadi</td></tr>';
+        });
+}
+
+// Sahifa yuklanganda buyurtmalarni yuklash
+document.addEventListener('DOMContentLoaded', function() {
+    loadOrders();
+});
+
 init();
 console.log('📱 Muxtor Mobile Admin Panel — Tayyor!');

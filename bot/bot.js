@@ -116,6 +116,16 @@ app.post('/api/order', function(req, res) {
     res.json({ success: true });
 });
 
+// Buyurtmalarni olish
+app.get('/api/orders', function(req, res) {
+    var f = path.join(__dirname, '..', 'data', 'orders.json');
+    if (fs.existsSync(f)) {
+        res.json(JSON.parse(fs.readFileSync(f, 'utf8')));
+    } else {
+        res.json([]);
+    }
+});
+
 app.listen(PORT, function() {
     console.log('✅ Server ' + PORT + ' portda');
 });
