@@ -49,21 +49,69 @@ app.post('/api/order', function(req, res) {
     orders.push({ id: Date.now(), ...o, date: new Date().toISOString() });
     fs.writeFileSync(f, JSON.stringify(orders, null, 2));
 
-    // Telegramga
-    var msg = '📦 YANGI BUYURTMA!\n\n';
-    msg += '👤 ' + (o.customer?.name || '-') + '\n';
-    msg += '📞 ' + (o.customer?.phone || '-') + '\n';
-    msg += '📍 ' + (o.customer?.address || '-') + '\n\n';
+        // Telegramga professional formatda yuborish
+    var date = new Date();
+    var sana = date.toLocaleDateString('uz-UZ', { year: 'numeric', month: 'long', day: 'numeric' });
+    var vaqt = date.toLocaleTimeString('uz-UZ', { hour: '2-digit', minute: '2-digit' });
+    
+    var msg = '🛒 <b>YANGI BUYURTMA!</b>\n';
+    msg += '━━━━━━━━━━━━━━━━━━\n\n';
+    msg += '👤 <b>Mijoz:</b> ' + (o.customer?.name || 'Anonim') + '\n';
+    msg += '📞 <b>Telefon:</b> <code>' + (o.customer?.phone || '-') + '</code>\n';
+    msg += '📍 <b>Manzil:</b> ' + (o.customer?.address || 'Ko\'rsatilmagan') + '\n';
+    msg += '💳 <b>To\'lov:</b> ' + (o.payment === 'click' ? '📱 Click' : o.payment === 'payme' ? '💳 Payme' : '💵 Naqd pul') + '\n\n';
+    
+    msg += '━━━━━━━━━━━━━━━━━━\n';
+    msg += '📱 <b>MAHSULOTLAR:</b>\n\n';
+    
     var total = 0;
-    (o.items || []).forEach(function(i) {
-        msg += '• ' + i.name + ' ×' + i.quantity + '\n';
-        total += i.price * i.quantity;
+    (o.items || []).forEach(function(i, index) {
+        var sum = i.price * i.quantity;
+        total += sum;
+        msg += (index + 1) + '. ' + i.name + '\n';
+        msg += '   ' + i.price.toLocaleString('uz-UZ') + ' so\'m × ' + i.quantity + ' = <b>' + sum.toLocaleString('uz-UZ') + ' so\'m</b>\n';
     });
-    msg += '\n💰 ' + total.toLocaleString('uz-UZ') + ' so\'m';
+    
+    msg += '\n━━━━━━━━━━━━━━━━━━\n';
+    msg += '💰 <b>JAMI:</b> <b>' + total.toLocaleString('uz-UZ') + ' so\'m</b>\n';
+    msg += '📅 <b>Sana:</b> ' + sana + '\n';
+    msg += '🕐 <b>Vaqt:</b> ' + vaqt + '\n';
+    msg += '🌐 <b>Manba:</b> Saytdan buyurtma\n\n';
+    msg += '#buyurtma #muxtor_mobile';
 
-    https.get('https://api.telegram.org/bot' + BOT_TOKEN + '/sendMessage?chat_id=' + ADMIN_CHAT_ID + '&text=' + encodeURIComponent(msg), function(r) {
-        console.log('TG: yuborildi');
+    var url = 'https://api.telegram.org/bot' + BOT_TOKEN + '/sendMessage';
+    
+    var https = require('https');
+    var postData = JSON.stringify({
+        chat_id: ADMIN_CHAT_ID,
+        text: msg,
+        parse_mode: 'HTML'
     });
+    
+    var options = {
+        hostname: 'api.telegram.org',
+        path: '/bot' + BOT_TOKEN + '/sendMessage',
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Content-Length': Buffer.byteLength(postData)
+        }
+    };
+    
+    var req = https.request(options, function(res) {
+        var data = '';
+        res.on('data', function(chunk) { data += chunk; });
+        res.on('end', function() {
+            console.log('📨 Telegram javobi:', data);
+        });
+    });
+    
+    req.on('error', function(e) {
+        console.log('❌ Telegram xatolik:', e.message);
+    });
+    
+    req.write(postData);
+    req.end();
 
     res.json({ success: true });
 });

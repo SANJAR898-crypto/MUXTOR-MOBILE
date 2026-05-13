@@ -131,7 +131,7 @@ function renderProducts(list) {
             <div class="product-info">
                 <div class="product-brand">${p.brandName}</div>
                 <div class="product-name">${p.name}</div>
-                <div class="product-specs">${(p.specs || []).slice(0, 3).map(s => `<span class="spec-tag">${s}</span>`).join('')}</div>
+                <div class="product-specs">${(Array.isArray(p.specs) ? p.specs : (typeof p.specs === 'string' ? p.specs.split(',').map(s => s.trim()) : [])).slice(0, 3).map(s => `<span class="spec-tag">${s}</span>`).join('')}</div>
                 <div class="product-price">
                     <span class="price-now">${formatPrice(p.price)}</span>
                     ${p.oldPrice ? `<span class="price-old">${formatPrice(p.oldPrice)}</span>` : ''}
@@ -481,26 +481,34 @@ setInterval(() => {
 
 // ========== INIT (BUG FIX: faqat bitta init, barcha funksiyalar ta'riflangan) ==========
 function init() {
-    // AVVAL serverdan yuklash
+    var loader = document.getElementById('pageLoader');
+    
+    // Mahsulotlarni serverdan olish
     fetch('https://muxtor-mobile.onrender.com/api/products')
         .then(function(res) { return res.json(); })
         .then(function(data) {
             if (data && data.length > 0) {
                 products = data;
-                console.log('📱 Serverdan ' + products.length + ' ta mahsulot yuklandi');
             }
+            // Saytni ko'rsatish
             renderProducts(products);
             updateCartUI();
             initEvents();
-            hideLoader();
+            // Loaderni yashirish
+            if (loader) {
+                loader.style.display = 'none';
+            }
+            console.log('✅ Sayt tayyor');
         })
         .catch(function(err) {
-            console.log('⚠️ Server offline:', err.message);
-            // Server ishlamasa, default mahsulotlarni ko'rsatish
+            // Xatolik bo'lsa ham saytni ko'rsatish
             renderProducts(products);
             updateCartUI();
             initEvents();
-            hideLoader();
+            if (loader) {
+                loader.style.display = 'none';
+            }
+            console.log('⚠️ Server offline:', err.message);
         });
 }
 window.addEventListener('load', function () {
